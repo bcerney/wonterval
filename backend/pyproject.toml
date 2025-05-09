@@ -1,0 +1,51 @@
+[project]
+dynamic = ["version"]
+name = "app"
+
+[tool.poetry]
+name = "app"
+version = "0.0.0"
+description = ""
+authors = ["Brian Cerney <bgdg@protonmail.com>"]
+maintainers = ["Brian Cerney <bgdg@protonmail.com>"]
+
+[tool.poetry.requires-plugins]
+poetry-dynamic-versioning = { version = ">=1.0.0,<2.0.0", extras = ["plugin"] }
+
+[tool.poetry-dynamic-versioning]
+enable = true
+vcs = "git"
+style = "semver"
+
+[tool.poetry.scripts]
+backend-app = "app.main:main"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.115.12"
+dunamai = "^1.23.1"
+sqlalchemy = "^2.0.40"
+psycopg2 = "^2.9.10"
+pydantic = "^2.11.4"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.11.7"
+pdbpp = "^0.11.6"
+pytest = "^8.3.5"
+yamllint = "^1.37.0"
+pytest-cov = "^6.1.1"
+
+[tool.ruff]
+target-version = "py313"
+preview = true
+
+[tool.ruff.lint]
+# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
+# Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
+# McCabe complexity (`C901`) by default.
+select = ["DOC", "E4", "E7", "E9", "F", "I"]
+ignore = []
+
+[build-system]
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
+build-backend = "poetry_dynamic_versioning.backend"

@@ -1,0 +1,91 @@
+[tools]
+helm = '3.16.4'
+kubectl = "1.33.0"
+node = "20.19.1"
+poetry = '2.1.2'
+python = '3.13.3'
+terraform = "1.11.4"
+
+[env]
+_.file = '/opt/wonterval/.env'
+
+DOCKER_IMAGE_NAME = 'wonterval'
+DOCKER_IMAGE_TAG = 'latest'
+
+HELM_RELEASE_NAME = 'wonterval'
+HELM_CHART_PATH = 'helm/wonterval/'
+
+K8S_NAMESPACE = 'wonterval'
+
+PY_PACKAGES = 'wonterval'
+
+[tasks.setup]
+description = 'Setup development environment using mise'
+run = 'mise install'
+
+[tasks.backend-install]
+dir = "{{cwd}}/backend"
+description = 'Install backend dependencies'
+run = 'poetry install'
+
+[tasks.backend-update]
+dir = "{{cwd}}/backend"
+description = 'Update backend dependencies'
+run = 'poetry update'
+
+[tasks.backend-test]
+dir = "{{cwd}}/backend"
+description = 'Run all backend tests'
+run = 'poetry run pytest --cov=wonterval/'
+
+[tasks.py-format]
+dir = "{{cwd}}/backend"
+description = 'Formatting'
+run = """
+#!/usr/bin/env bash
+poetry run ruff check --fix $PY_PACKAGES
+poetry run ruff format $PY_PACKAGES
+"""
+
+[tasks.py-lint]
+dir = "{{cwd}}/backend"
+description = 'Linting'
+run = 'poetry run ruff check $PY_PACKAGES'
+
+[tasks.backend-docker-build]
+dir = "{{cwd}}/backend"
+description = 'Build Docker image'
+run = 'docker build -t $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG .'
+
+[tasks.compose-up]
+description = 'Start Docker Compose services'
+run = 'COMPOSE_BAKE=true docker compose up --build -d'
+
+[tasks.compose-down]
+description = 'Stop Docker Compose services'
+run = 'docker compose down --remove-orphans -v'
+
+[tasks.frontend-install]
+dir = "{{cwd}}/frontend"
+description = 'Install frontend dependencies'
+run = 'npm install'
+
+[tasks.frontend-build]
+dir = "{{cwd}}/frontend"
+description = 'Build frontend'
+run = 'npm run build'
+
+[tasks.frontend-dev]
+dir = "{{cwd}}/frontend"
+description = 'Start frontend development server'
+run = 'npm run dev'
+
+[tasks.frontend-check]
+dir = "{{cwd}}/frontend"
+description = 'Type-check frontend code'
+run = 'npm run check'
+
+[tasks.frontend-docker-build]
+dir = "{{cwd}}/frontend"
+description = 'Build frontend Docker image'
+run = 'docker build -t $DOCKER_IMAGE_NAME-frontend:$DOCKER_IMAGE_TAG .'
